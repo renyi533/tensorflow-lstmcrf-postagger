@@ -1,5 +1,6 @@
 import tensorflow as tf
 import json
+from model import padding
 
 class biRNNTagger(object):
     def __init__(self, config):

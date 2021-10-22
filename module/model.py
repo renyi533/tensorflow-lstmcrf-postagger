@@ -144,9 +144,7 @@ class Tagger(object):
     
     
     def RNN(self, X, weights, biases,seq_length,dropout):
-        inputs = tf.reshape(X,[-1,self.n_inputs])
-        inputs = tf.matmul(inputs,self.wordembedding)
-        inputs = tf.reshape(inputs,[-1,self.max_step,self.n_inputs])
+        inputs = X
         # create a BasicRNNCell
         #basicrnn = tf.contrib.rnn.BasicRNNCell(n_hidden_units)
         cell = tf.contrib.rnn.LSTMCell(self.n_hidden_units)

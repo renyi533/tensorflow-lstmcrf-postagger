@@ -21,7 +21,7 @@ os.chdir('../en')
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 sentences = word2vec.LineSentence("data_seg_train.txt")
-model = word2vec.Word2Vec(sentences, size=100,min_count=1)
+model = word2vec.Word2Vec(sentences, vector_size=100,min_count=1)
 
 #保存模型，供日後使用
 model.save("word2vec.model")
@@ -34,7 +34,7 @@ model = word2vec.Word2Vec.load("word2vec.model")
 
 
 sentences = word2vec.LineSentence("data_seg_train.txt")
-model_ted = FastText(sentences, size=100, window=5, min_count=1, workers=4,sg=0,min_n=1,max_n=4)
+model_ted = FastText(sentences, vector_size=100, window=5, min_count=1, workers=4,sg=0,min_n=1,max_n=4)
 model_ted.save("fasttext.model")
 '''
 model_ted = word2vec.Word2Vec.load("fasttext.model")
