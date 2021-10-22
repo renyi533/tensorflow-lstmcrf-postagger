@@ -4,7 +4,8 @@ Created on Thu May 31 16:03:17 2018
 
 @author: wanting_huang
 """
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import os
 import numpy as np
 import json

@@ -1,5 +1,8 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import json
+import tensorflow_addons as tfa
+from model import padding
 
 class CRFTagger(object):
     def __init__(self, config):
@@ -32,7 +35,7 @@ class CRFTagger(object):
         
         self.logits = self.RNN(self.x, self.weights, self.biases, self.length, self.dropout)
         y_t = tf.argmax(self.y, 2)
-        log_likelihood, transition_params = tf.contrib.crf.crf_log_likelihood(self.logits, y_t, self.length)
+        log_likelihood, transition_params = tfa.text.crf.crf_log_likelihood(self.logits, y_t, self.length)
 
 
         # Define loss and optimizer
@@ -49,7 +52,7 @@ class CRFTagger(object):
 
 #        mask_logit = tf.boolean_mask(self.logits, mask2)
 #        tags_seq, tags_score = tf.contrib.crf.viterbi_decode(mask_logit, trans_matrix)
-        self.__tags_seq, tags_score = tf.contrib.crf.crf_decode(self.logits, transition_params, self.length) 
+        self.__tags_seq, tags_score = tfa.text.crf.crf_decode(self.logits, transition_params, self.length) 
         y_t = tf.cast(y_t,tf.int32)
         
         #mask_tags = tf.boolean_mask(self.__tags_seq, mask2)
@@ -90,8 +93,8 @@ class CRFTagger(object):
         inputs = X
         # create a BasicRNNCell
         #basicrnn = tf.contrib.rnn.BasicRNNCell(n_hidden_units)
-        cell = tf.contrib.rnn.LSTMCell(self.n_hidden_units)
-        cell = tf.contrib.rnn.DropoutWrapper(cell, output_keep_prob=1.0 - dropout)
+        cell = tf.nn.rnn_cell.LSTMCell(self.n_hidden_units)
+        cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob=1.0 - dropout)
         #initial_state = basicrnn.zero_state(batch_size, dtype=tf.float32)
         # 'outputs' is a tensor of shape [batch_size, max_time, cell_state_size]
         # 'state' is a tensor of shape [batch_size, cell_state_size]

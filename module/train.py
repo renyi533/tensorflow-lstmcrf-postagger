@@ -4,7 +4,8 @@ Created on Wed Jun  6 11:02:54 2018
 
 @author: wanting_huang
 """
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import os
 from sklearn.utils import shuffle
 import timeit

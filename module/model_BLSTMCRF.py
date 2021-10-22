@@ -1,5 +1,8 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import json
+import tensorflow_addons as tfa
+from model import padding
 
 class BCRFTagger(object):
     def __init__(self, config):
@@ -31,7 +34,7 @@ class BCRFTagger(object):
         
         self.logits = self.biRNN(self.x, self.bi_weights, self.bi_biases,self.length, self.dropout)     
         y_t = tf.argmax(self.y, 2)
-        log_likelihood, transition_params = tf.contrib.crf.crf_log_likelihood(self.logits, y_t, self.length)
+        log_likelihood, transition_params = tfa.text.crf.crf_log_likelihood(self.logits, y_t, self.length)
 
 
         # Define loss and optimizer
@@ -48,7 +51,7 @@ class BCRFTagger(object):
 
         #softmaxlogits = tf.nn.softmax(self.logits)
         #self.__tags_seq, tags_score = tf.contrib.crf.crf_decode(softmaxlogits, transition_params, self.length)         
-        self.__tags_seq, tags_score = tf.contrib.crf.crf_decode(self.logits, transition_params, self.length) 
+        self.__tags_seq, tags_score = tfa.text.crf.crf_decode(self.logits, transition_params, self.length) 
         
         y_t = tf.cast(y_t,tf.int32)
         
@@ -86,10 +89,10 @@ class BCRFTagger(object):
     
     def biRNN(self, X, weights, biases,seq_length, dropout):
         inputs = X
-        cell_fw = tf.contrib.rnn.BasicLSTMCell(self.n_hidden_units)
-        cell_bw = tf.contrib.rnn.BasicLSTMCell(self.n_hidden_units)
-        cell_fw = tf.contrib.rnn.DropoutWrapper(cell_fw, input_keep_prob=1.0 - dropout, output_keep_prob=1.0 - dropout)
-        cell_bw = tf.contrib.rnn.DropoutWrapper(cell_bw, input_keep_prob=1.0 - dropout, output_keep_prob=1.0 - dropout)
+        cell_fw = tf.nn.rnn_cell.BasicLSTMCell(self.n_hidden_units)
+        cell_bw = tf.nn.rnn_cell.BasicLSTMCell(self.n_hidden_units)
+        cell_fw = tf.nn.rnn_cell.DropoutWrapper(cell_fw, input_keep_prob=1.0 - dropout, output_keep_prob=1.0 - dropout)
+        cell_bw = tf.nn.rnn_cell.DropoutWrapper(cell_bw, input_keep_prob=1.0 - dropout, output_keep_prob=1.0 - dropout)
     
         state_outputs, final_state = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, inputs, sequence_length=seq_length, dtype=tf.float32)
         state_outputs = tf.concat([state_outputs[0], state_outputs[1]], 2)

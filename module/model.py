@@ -1,4 +1,5 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import json
 
 def padding(data,per_size,max_step):
@@ -144,13 +145,11 @@ class Tagger(object):
     
     
     def RNN(self, X, weights, biases,seq_length,dropout):
-        inputs = tf.reshape(X,[-1,self.n_inputs])
-        inputs = tf.matmul(inputs,self.wordembedding)
-        inputs = tf.reshape(inputs,[-1,self.max_step,self.n_inputs])
+        inputs = X
         # create a BasicRNNCell
         #basicrnn = tf.contrib.rnn.BasicRNNCell(n_hidden_units)
-        cell = tf.contrib.rnn.LSTMCell(self.n_hidden_units)
-        cell = tf.contrib.rnn.DropoutWrapper(cell, output_keep_prob=1.0 - dropout)
+        cell = tf.nn.rnn_cell.LSTMCell(self.n_hidden_units)
+        cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob=1.0 - dropout)
         #initial_state = basicrnn.zero_state(batch_size, dtype=tf.float32)
         # 'outputs' is a tensor of shape [batch_size, max_time, cell_state_size]
         # 'state' is a tensor of shape [batch_size, cell_state_size]

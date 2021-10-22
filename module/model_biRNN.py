@@ -1,5 +1,7 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import json
+from model import padding
 
 class biRNNTagger(object):
     def __init__(self, config):
@@ -69,10 +71,10 @@ class biRNNTagger(object):
  
     def biRNN(self, X, weights, biases,seq_length, dropout):
         inputs = X
-        cell_fw = tf.contrib.rnn.BasicLSTMCell(self.n_hidden_units)
-        cell_bw = tf.contrib.rnn.BasicLSTMCell(self.n_hidden_units)
-        cell_fw = tf.contrib.rnn.DropoutWrapper(cell_fw, input_keep_prob=1.0 - dropout, output_keep_prob=1.0 - dropout)
-        cell_bw = tf.contrib.rnn.DropoutWrapper(cell_bw, input_keep_prob=1.0 - dropout, output_keep_prob=1.0 - dropout)
+        cell_fw = tf.nn.rnn_cell.BasicLSTMCell(self.n_hidden_units)
+        cell_bw = tf.nn.rnn_cell.BasicLSTMCell(self.n_hidden_units)
+        cell_fw = tf.nn.rnn_cell.DropoutWrapper(cell_fw, input_keep_prob=1.0 - dropout, output_keep_prob=1.0 - dropout)
+        cell_bw = tf.nn.rnn_cell.DropoutWrapper(cell_bw, input_keep_prob=1.0 - dropout, output_keep_prob=1.0 - dropout)
     
         state_outputs, final_state = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, inputs, sequence_length=seq_length, dtype=tf.float32)
         state_outputs = tf.concat([state_outputs[0], state_outputs[1]], 2)
