@@ -74,11 +74,11 @@ def datalabel2dt(data,label,save_name,embedding_size=100):
                         dt[i]['origin'] += word+'_'+tag+' '
                         dt[i]['onehot_label'].append(tagdt[tag])
                         try:
-                            dt[i]['word2vec'].append(model[word].tolist())
+                            dt[i]['word2vec'].append(model.wv[word].tolist())
                         except:
                             dt[i]['word2vec'].append([0]*embedding_size)
                         try: 
-                            dt[i]['fasttext'].append(model_ted[word].tolist())
+                            dt[i]['fasttext'].append(model_ted.wv[word].tolist())
                         except:
                             dt[i]['fasttext'].append([0]*embedding_size)
                     
