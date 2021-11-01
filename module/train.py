@@ -15,6 +15,8 @@ import parameter
 import model_biRNN
 import model_LSTMCRF
 import model_BLSTMCRF
+import module_BLSTMStructPerceptron
+import module_LSTMStructPerceptron
 import argparse
          
 def train(flag, file_to_save_model, data_dir):
@@ -28,6 +30,10 @@ def train(flag, file_to_save_model, data_dir):
         tagger = model_LSTMCRF.CRFTagger(config=config)
     elif flag == '4':
         tagger = model_BLSTMCRF.BCRFTagger(config=config)
+    elif flag == '5':
+        tagger = module_LSTMStructPerceptron.StructPerceptronTagger(config=config)
+    elif flag == '6':
+        tagger = module_BLSTMStructPerceptron.BStructPerceptronTagger(config=config)
     else:
     	print("No such model!")
     	exit()
